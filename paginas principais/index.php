@@ -393,6 +393,14 @@ sort($paises); // Ordenar alfabeticamente
     width: 120px;
   }
 }
+/* Dropdown do usuário controlado via JS */
+.user-dropdown {
+  display: none !important;
+}
+
+.user-dropdown.show {
+  display: block !important;
+}
   </style>
 </head>
 <body>
@@ -467,20 +475,30 @@ sort($paises); // Ordenar alfabeticamente
     </div>
     
     <!-- Usuário -->
-    <div class="nav-icon user-icon">
-      <i class="far fa-user"></i>
-      <div class="user-dropdown">
-        <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']): ?>
-          <a href="perfil.php">Meu Perfil</a>
-          <a href="pedidos.php">Meus Pedidos</a>
-          <a href="favoritos.php">Favoritos</a>
-          <a href="#" class="sair" id="sairConta">Sair</a>
-        <?php else: ?>
-          <a href="#" id="openLoginMenu">Fazer Login</a>
-          <a href="#" id="openSignupMenu">Cadastrar</a>
-        <?php endif; ?>
+<div class="nav-icon user-icon">
+  <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']): ?>
+
+      <!-- Remove a foto e mantém somente a inicial -->
+      <div class="avatar-placeholder">
+        <?php echo substr($_SESSION['usuario']['nome'], 0, 1); ?>
       </div>
+
+      <div class="user-dropdown">
+        <a href="perfil.php">Meu Perfil</a>
+        <a href="pedidos.php">Meus Pedidos</a>
+        <a href="favoritos.php">Favoritos</a>
+        <a href="#" class="sair" id="sairConta">Sair</a>
+      </div>
+
+  <?php else: ?>
+    <i class="far fa-user"></i>
+    <div class="user-dropdown">
+      <a href="#" id="openLoginMenu">Fazer Login</a>
+      <a href="#" id="openSignupMenu">Cadastrar</a>
     </div>
+  <?php endif; ?>
+</div>
+
     
     <div class="nav-icon cart-icon" id="carrinho">
       <i class="fas fa-shopping-bag"></i>
@@ -1357,6 +1375,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Debug: Verificar se o ícone do carrinho está presente
     console.log('Ícone do carrinho:', document.querySelector('.cart-icon'));
+});
+// === Dropdown do Usuário - Funcional ===
+document.addEventListener("DOMContentLoaded", () => {
+  const userIcon = document.querySelector(".user-icon");
+  const dropdown = document.querySelector(".user-dropdown");
+
+  if (!userIcon || !dropdown) return;
+
+  // Abre/fecha ao clicar no ícone
+  userIcon.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
+
+  // Fecha ao clicar fora
+  document.addEventListener("click", () => {
+    dropdown.classList.remove("show");
+  });
+
+  // Evita fechar quando clicar dentro
+  dropdown.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
 });
 </script>
 </body>
